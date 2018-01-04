@@ -13,7 +13,9 @@
  * Defines
  ************************************************************************/
 #ifndef BOARD_DEFAULT
-#if (RCAR_LSI == RCAR_E3)
+#if (RCAR_LSI == RCAR_V3M)
+#define BOARD_DEFAULT		(BOARD_UNKNOWN << BOARD_CODE_SHIFT)
+#elif (RCAR_LSI == RCAR_E3)
 #define BOARD_DEFAULT		(BOARD_EBISU << BOARD_CODE_SHIFT)
 #else  /* (RCAR_LSI == RCAR_E3) */
 #define BOARD_DEFAULT		(BOARD_SALVATOR_X << BOARD_CODE_SHIFT)

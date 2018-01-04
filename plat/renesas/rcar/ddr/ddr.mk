@@ -11,3 +11,6 @@ else
 endif
 
 BL2_SOURCES += plat/renesas/rcar/ddr/dram_sub_func.c
+ifeq (${RCAR_LSI},${RCAR_V3M})
+    BL2_SOURCES += plat/renesas/rcar/ddr/V3M/ddr_init_v3m.c
+endif

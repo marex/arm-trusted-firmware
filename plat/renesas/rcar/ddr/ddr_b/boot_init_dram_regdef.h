@@ -56,6 +56,7 @@
 #define PRR_CUT_MASK		(0x000000FFU)
 #define PRR_PRODUCT_H3		(0x00004F00U)           /* R-Car H3   */
 #define PRR_PRODUCT_M3		(0x00005200U)           /* R-Car M3-W */
+#define PRR_PRODUCT_V3M		(0x00005400U)           /* R-Car V3M  */
 #define PRR_PRODUCT_M3N		(0x00005500U)           /* R-Car M3-N */
 #define PRR_PRODUCT_V3H		(0x00005600U)           /* R-Car V3H  */
 #define PRR_PRODUCT_10		(0x00U)			/*   Ver.1.0  */

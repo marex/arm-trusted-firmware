@@ -19,6 +19,10 @@
 #include "dram_sub_func.h"
 #include "micro_wait.h"
 
+#if RCAR_LSI == RCAR_V3M	/* V3M */
+  #include "V3M/boot_init_dram_v3m.h"
+#endif
+
 #define DDR_BACKUPMODE
 #define FATAL_MSG(x) NOTICE(x)
 
@@ -3755,6 +3759,13 @@ int32_t InitDram(void)
 	Prr_Product = mmio_read_32(PRR) & PRR_PRODUCT_MASK;
 	Prr_Cut = mmio_read_32(PRR) & PRR_CUT_MASK;
 #endif//RCAR_DDR_FIXED_LSI_TYPE
+
+#if RCAR_LSI == RCAR_V3M
+	if (Prr_Product == PRR_PRODUCT_V3M) {
+		init_ddr_v3m1600();
+		return INITDRAM_OK;
+	}
+#endif
 
 	if (Prr_Product==PRR_PRODUCT_H3) {
 		if(Prr_Cut<=PRR_PRODUCT_11){
