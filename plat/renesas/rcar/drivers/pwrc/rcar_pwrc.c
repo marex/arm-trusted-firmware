@@ -861,7 +861,7 @@ uint32_t rcar_bl31_get_cpu_num(uint32_t cluster_type)
 	uint32_t num = 0U;
 	uint32_t loop;
 	uint32_t prr_data;
-
+return 1; // FIXME
 	prr_data = mmio_read_32((uintptr_t)RCAR_PRR);
 
 	/* CA53 CPU */

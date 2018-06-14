@@ -127,6 +127,9 @@
 #elif RCAR_LSI == RCAR_E3
 #define TARGET_PRODUCT		RCAR_PRODUCT_E3
 #define TARGET_NAME		"R-Car E3"
+#elif RCAR_LSI == RCAR_D3
+#define TARGET_PRODUCT		RCAR_PRODUCT_D3
+#define TARGET_NAME		"R-Car D3"
 #endif
 
 /* for SuspendToRAM */
@@ -399,12 +402,15 @@ void bl2_early_platform_setup(meminfo_t *mem_layout)
 	const char *product_m3      = "M3";
 	const char *product_m3n     = "M3N";
 	const char *product_e3      = "E3";
+	const char *product_d3      = "D3";
 	const char *lcs_cm          = "CM";
 	const char *lcs_dm          = "DM";
 	const char *lcs_sd          = "SD";
 	const char *lcs_secure      = "SE";
 	const char *lcs_fa          = "FA";
-#if RCAR_LSI == RCAR_E3
+#if RCAR_LSI == RCAR_D3
+	const char *boot_hyper150   = "HyperFlash(150MHz)";
+#elif RCAR_LSI == RCAR_E3
 	const char *boot_hyper160   = "HyperFlash(150MHz)";
 #else /* RCAR_LSI == RCAR_E3 */
 	const char *boot_hyper160   = "HyperFlash(160MHz)";
@@ -457,7 +463,7 @@ void bl2_early_platform_setup(meminfo_t *mem_layout)
 		str = unknown;
 		break;
 	}
-	(void)sprintf(msg, "BL2: R-Car Gen3 Initial Program Loader(%s) Rev.%s\n"
+	(void)sprintf(msg, "BL2: R-Car D3 Initial Program Loader(%s) Rev.%s\n"
 						, str, version_of_renesas);
 	NOTICE("%s", msg);
 
@@ -476,6 +482,9 @@ void bl2_early_platform_setup(meminfo_t *mem_layout)
 		break;
 	case RCAR_PRODUCT_E3:
 		str = product_e3;
+		break;
+	case RCAR_PRODUCT_D3:
+		str = product_d3;
 		break;
 	default:
 		str = unknown;
@@ -551,7 +560,11 @@ void bl2_early_platform_setup(meminfo_t *mem_layout)
 
 	switch (modemr_boot_dev) {
 	case MODEMR_BOOT_DEV_HYPERFLASH160:
+#if RCAR_LSI == RCAR_D3
+		str = boot_hyper150;
+#else
 		str = boot_hyper160;
+#endif
 		break;
 	case MODEMR_BOOT_DEV_HYPERFLASH80:
 		str = boot_hyper80;
@@ -572,6 +585,13 @@ void bl2_early_platform_setup(meminfo_t *mem_layout)
 		str = unknown;
 		break;
 	}
+#if RCAR_LSI == RCAR_D3
+	if((str == boot_emmc25x1) || (str == boot_emmc50x8)){
+		ERROR("BL2: Failed to Initialize. eMMC is not supported.\n");
+		/* Infinite loop */
+		panic();
+	}
+#endif
 	(void)sprintf(msg, "BL2: Boot device is %s\n", str);
 	NOTICE("%s", msg);
 
@@ -826,10 +846,15 @@ void bl2_plat_flush_bl31_params(void)
 	}
 
 	val = mmio_read_32(RCAR_PRR);
+#if DEBUG
+	val = RCAR_PRODUCT_D3;
+#endif
 	if ((RCAR_PRODUCT_M3 == (val & RCAR_PRODUCT_MASK)) ||
 		((RCAR_PRODUCT_H3 == (val & RCAR_PRODUCT_MASK)) &&
-			(RCAR_CUT_VER20 > (val & RCAR_CUT_MASK)))) {
+			(RCAR_CUT_VER20 > (val & RCAR_CUT_MASK))) ||
+	    (RCAR_PRODUCT_D3 == (val & RCAR_PRODUCT_MASK))) {
 		/* No need to disable MFIS write protection */
+		INFO("BL2: bl2_plat_flush_bl31_params val=0x%x\n", val);
 		;
 	} else {
 		/* Disable MFIS write protection */
@@ -893,6 +918,9 @@ void bl2_plat_flush_bl31_params(void)
 
 	/* disable the System WDT, FIQ and GIC	*/
 	bl2_swdt_release();
+
+	/* Finalize a console of provide early debug support */
+	console_flush();
 
 	/* Initialize the System Module stop registers */
 	bl2_system_cpg_init();
@@ -1014,7 +1042,9 @@ void bl2_plat_get_bl33_meminfo(meminfo_t *bl33_meminfo)
 
 void bl2_init_generic_timer(void)
 {
-#if RCAR_LSI == RCAR_E3
+#if RCAR_LSI == RCAR_D3
+	uint32_t reg_cntfid = EXTAL_DRAAK;
+#elif RCAR_LSI == RCAR_E3
 	uint32_t reg_cntfid = EXTAL_EBISU;
 #else /* RCAR_LSI == RCAR_E3 */
 	uint32_t reg;

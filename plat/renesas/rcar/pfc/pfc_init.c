@@ -28,6 +28,9 @@
 #if RCAR_LSI == RCAR_E3	/* E3 */
   #include "E3/pfc_init_e3.h"
 #endif
+#if RCAR_LSI == RCAR_D3	/* D3 */
+  #include "D3/pfc_init_d3.h"
+#endif
 
  /* Product Register */
 #define PRR			(0xFFF00044U)
@@ -37,6 +40,7 @@
 #define PRR_PRODUCT_M3		(0x00005200U)           /* R-Car M3 */
 #define PRR_PRODUCT_M3N		(0x00005500U)           /* R-Car M3N */
 #define PRR_PRODUCT_E3		(0x00005700U)		/* R-Car E3 */
+#define PRR_PRODUCT_D3		(0x00005800U)           /* R-Car D3 */
 #define PRR_PRODUCT_10		(0x00U)
 #define PRR_PRODUCT_11		(0x01U)
 #define PRR_PRODUCT_20		(0x10U)
@@ -167,6 +171,12 @@ void pfc_init(void)
 		PRR_PRODUCT_ERR(reg);
 	}
 	pfc_init_e3();
+ #elif RCAR_LSI == RCAR_D3	/* D3 */
+	if ((PRR_PRODUCT_D3 | PRR_PRODUCT_10)
+			!= (reg & (PRR_PRODUCT_MASK | PRR_CUT_MASK))) {
+		PRR_PRODUCT_ERR(reg);
+	}
+	pfc_init_d3();
  #else
   #error "Don't have PFC initialize routine(unknown)."
  #endif

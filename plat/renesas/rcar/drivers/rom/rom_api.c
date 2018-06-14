@@ -5,6 +5,7 @@
  */
 
 #include <stdint.h>
+#include <debug.h>
 #include <mmio.h>
 #include "rcar_def.h"
 #include "rom_api.h"
@@ -75,6 +76,7 @@ static uint32_t get_table_index(void)
 	uint32_t index;
 
 	product = mmio_read_32(RCAR_PRR) & RCAR_PRODUCT_MASK;
+
 	cut_ver = mmio_read_32(RCAR_PRR) & RCAR_CUT_MASK;
 
 	switch (product) {
@@ -97,9 +99,10 @@ static uint32_t get_table_index(void)
 		}
 		break;
 	default:
-		index = NEW_API_TABLE;		/* M3N and E3 */
+		index = NEW_API_TABLE;		/* M3N, E3, D3 */
 		break;
 	}
+	INFO("BL2: get_table_index index=%d\n", index);
 
 	return index;
 }

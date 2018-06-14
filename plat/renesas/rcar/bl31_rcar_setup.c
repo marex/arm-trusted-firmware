@@ -102,7 +102,9 @@ entry_point_info_t *bl31_plat_get_next_image_ep_info(uint32_t type)
 void bl31_early_platform_setup(bl31_params_t *from_bl2,
 		void *plat_params_from_bl2)
 {
+#if RCAR_LSI != RCAR_D3
 	uint32_t cluster_type;
+#endif
 
 	/* Initialize the log area to provide early debug support */
 	console_init(1U, 0U, 0U);
@@ -118,6 +120,7 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 
 	bl2_to_bl31_params = from_bl2;
 
+#if RCAR_LSI != RCAR_D3
 	cluster_type = rcar_bl31_get_cluster();
 	if (RCAR_CLUSTER_A53A57 == cluster_type) {
 		/*
@@ -131,7 +134,7 @@ void bl31_early_platform_setup(bl31_params_t *from_bl2,
 		 */
 		rcar_cci_enable();
 	}
-
+#endif
 }
 
 /*******************************************************************************

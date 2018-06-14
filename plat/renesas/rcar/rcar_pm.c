@@ -75,14 +75,18 @@ static void rcar_cpu_pwrdwn_common(void)
  ******************************************************************************/
 static void rcar_cluster_pwrdwn_common(void)
 {
+#if RCAR_LSI != RCAR_D3
 	uint32_t cluster_type;
+#endif
 	uint64_t mpidr = read_mpidr_el1();
 
+#if RCAR_LSI != RCAR_D3
 	cluster_type = rcar_bl31_get_cluster();
 	if (RCAR_CLUSTER_A53A57 == cluster_type) {
 		/* Disable coherency if this cluster is to be turned off */
 		rcar_cci_disable();
 	}
+#endif
 
 	/* Program the power controller to turn the cluster off */
 	rcar_pwrc_clusteroff(mpidr);

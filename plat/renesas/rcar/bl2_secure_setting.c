@@ -64,7 +64,7 @@ static const struct {
 	/*        1: Reserved[R-Car E3] */
 	/* Bit10: SCEG Secure Core slave ports. */
 	/*        0: registers can be accessed from secure resource only. */
-#if RCAR_LSI == RCAR_E3
+#if (RCAR_LSI == RCAR_D3 || RCAR_LSI == RCAR_E3)
 	{SEC_SEL6,		0xFFFFFBFFU},
 #else /* RCAR_LSI == RCAR_E3 */
 	{SEC_SEL6,		0xFFFFCBFFU},

@@ -51,6 +51,9 @@ else
   ifeq (${RCAR_LSI},${RCAR_E3})
     BL2_SOURCES += plat/renesas/rcar/pfc/E3/pfc_init_e3.c
   endif
+  ifeq (${RCAR_LSI},${RCAR_D3})
+    BL2_SOURCES += plat/renesas/rcar/pfc/D3/pfc_init_d3.c
+  endif
 endif
 
 BL2_SOURCES += plat/renesas/rcar/pfc/pfc_init.c

@@ -111,7 +111,7 @@
 #endif /* RCAR_LSI == RCAR_E3 */
 
 #define BL2_BASE			U(0xE6304000)
-#if RCAR_LSI == RCAR_E3
+#if (RCAR_LSI == RCAR_D3) || (RCAR_LSI == RCAR_E3)
 #define BL2_LIMIT			U(0xE6318000)
 #else  /* RCAR_LSI == RCAR_E3 */
 #define BL2_LIMIT			U(0xE632E800)

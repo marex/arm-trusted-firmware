@@ -92,12 +92,14 @@ RCAR_M3:=1
 RCAR_M3N:=2
 RCAR_E3:=3
 RCAR_H3N:=4
+RCAR_D3:=5
 RCAR_AUTO:=99
 $(eval $(call add_define,RCAR_H3))
 $(eval $(call add_define,RCAR_M3))
 $(eval $(call add_define,RCAR_M3N))
 $(eval $(call add_define,RCAR_E3))
 $(eval $(call add_define,RCAR_H3N))
+$(eval $(call add_define,RCAR_D3))
 $(eval $(call add_define,RCAR_AUTO))
 RCAR_CUT_10:=0
 RCAR_CUT_11:=1
@@ -198,6 +200,8 @@ else
       endif
       $(eval $(call add_define,RCAR_LSI_CUT))
     endif
+  else ifeq (${LSI},D3)
+    RCAR_LSI:=${RCAR_D3}
   else
     $(error "Error: ${LSI} is not supported.")
   endif
@@ -206,7 +210,7 @@ endif
 
 # Process RCAR_SECURE_BOOT flag
 ifndef RCAR_SECURE_BOOT
-RCAR_SECURE_BOOT := 1
+RCAR_SECURE_BOOT := 0
 endif
 $(eval $(call add_define,RCAR_SECURE_BOOT))
 
@@ -229,28 +233,30 @@ endif
 $(eval $(call add_define,RCAR_BL33_EXECUTION_EL))
 
 # Process RCAR_AVS_SETTING_ENABLE flag
-ifeq (${RCAR_AVS_SETTING_ENABLE},0)
+#ifeq (${RCAR_AVS_SETTING_ENABLE},0)
+#AVS_SETTING_ENABLE := 0
+#else
+#AVS_SETTING_ENABLE := 1
+#endif
 AVS_SETTING_ENABLE := 0
-else
-AVS_SETTING_ENABLE := 1
-endif
 $(eval $(call add_define,AVS_SETTING_ENABLE))
 
 # Process RCAR_LOSSY_ENABLE flag
-ifndef RCAR_LOSSY_ENABLE
+#ifndef RCAR_LOSSY_ENABLE
+#RCAR_LOSSY_ENABLE := 0
+#endif
 RCAR_LOSSY_ENABLE := 0
-endif
 $(eval $(call add_define,RCAR_LOSSY_ENABLE))
 
 # Process LIFEC_DBSC_PROTECT_ENABLE flag
 ifndef LIFEC_DBSC_PROTECT_ENABLE
-LIFEC_DBSC_PROTECT_ENABLE := 1
+LIFEC_DBSC_PROTECT_ENABLE := 0
 endif
 $(eval $(call add_define,LIFEC_DBSC_PROTECT_ENABLE))
 
 # Process PMIC_ROHM_BD9571 flag
 ifndef PMIC_ROHM_BD9571
-PMIC_ROHM_BD9571 := 1
+PMIC_ROHM_BD9571 := 0
 endif
 $(eval $(call add_define,PMIC_ROHM_BD9571))
 
@@ -284,7 +290,7 @@ $(eval $(call add_define,RCAR_REWT_TRAINING))
 
 # Process RCAR_SYSTEM_SUSPEND flag
 ifndef RCAR_SYSTEM_SUSPEND
-RCAR_SYSTEM_SUSPEND := 1
+RCAR_SYSTEM_SUSPEND := 0
 endif
 $(eval $(call add_define,RCAR_SYSTEM_SUSPEND))
 

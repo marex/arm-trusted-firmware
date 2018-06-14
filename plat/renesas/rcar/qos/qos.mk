@@ -82,6 +82,9 @@ else
      BL2_SOURCES += plat/renesas/rcar/qos/E3/qos_init_e3_v10.c
     endif
   endif
+  ifeq (${RCAR_LSI},${RCAR_D3})
+    BL2_SOURCES += plat/renesas/rcar/qos/D3/qos_init_d3.c
+  endif
 endif
 
 BL2_SOURCES += plat/renesas/rcar/qos/qos_init.c

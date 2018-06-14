@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2015-2018, Renesas Electronics Corporation. All rights reserved.
+ * Copyright (c) 2017, Renesas Electronics Corporation
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -27,63 +28,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#include <stdint.h>
-#include <debug.h>
-#include <mmio.h>
-#include "boot_init_dram.h"
-#include "D3/boot_init_dram_d3.h"
 
- /* Product Register */
-#define PRR			(0xFFF00044U)
-#define PRR_PRODUCT_MASK	(0x00007F00U)
-#define PRR_CUT_MASK		(0x000000FFU)
-#define PRR_PRODUCT_H3		(0x00004F00U)           /* R-Car H3 */
-#define PRR_PRODUCT_M3		(0x00005200U)           /* R-Car M3 */
-#define PRR_PRODUCT_D3		(0x00005800U)           /* R-Car D3 */
-#define PRR_PRODUCT_10		(0x00U)
-#define PRR_PRODUCT_11		(0x01U)
+#ifndef	BOOT_INIT_DRAM_D3__
+#define	BOOT_INIT_DRAM_D3__
 
-#define	RST_MODEMR	(0xE6160060)
-#define	MODEMR_MD19		(0x00080000U)	/* MD19 bit mask */
+extern uint32_t init_ddr_d31866(void);
+extern uint32_t init_ddr_d31600(void);
 
-#define PRR_PRODUCT_ERR(reg)	do{\
-				ERROR("LSI Product ID(PRR=0x%x) DDR "\
-				"initialize not supported.\n",reg);\
-				panic();\
-				}while(0)
-#define PRR_CUT_ERR(reg)	do{\
-				ERROR("LSI Cut ID(PRR=0x%x) DDR "\
-				"initialize not supported.\n",reg);\
-				panic();\
-				}while(0)
-
-int32_t InitDram(void)
-{
-	uint32_t reg;
-	uint32_t ddr_mbps;
-	int32_t  ret = 0;
-
-	reg = mmio_read_32(PRR);
-#if RCAR_LSI == RCAR_D3	/* D3 */
-	if (PRR_PRODUCT_D3 != (reg & PRR_PRODUCT_MASK)) {
-		PRR_PRODUCT_ERR(reg);
-	}
-	reg = mmio_read_32(RST_MODEMR);
-	if(MODEMR_MD19 == (reg & MODEMR_MD19)){
-		ret = init_ddr_d31866();
-		ddr_mbps = 1866;
-	}
-	else{
-		ret = init_ddr_d31600();
-		ddr_mbps = 1600;
-	}
-	if(ret != 1){
-		ret = 1;
-	}
-	NOTICE("BL2: DDR%d\n", ddr_mbps);
-	
-#else
-  #error "Don't have DDR initialize routine."
-#endif
-	return 0;
-}
+#endif /* BOOT_INIT_DRAM_D3__ */

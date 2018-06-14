@@ -14,6 +14,7 @@
 #define PRR_CUT_MASK		(0x000000FF)
 #define	PRR_PRODUCT_H3_VER_10	(0x00004F00)	/* R-Car H3 Ver.1.0 */
 #define	PRR_PRODUCT_E3		(0x00005700)	/* R-Car E3 */
+#define	PRR_PRODUCT_D3			(0x00005800)	/* R-Car D3 */
 
 /* module stop */
 #define	CPG_BASE		(0xE6150000)
@@ -58,6 +59,7 @@
 
 #define	SCBRR_115200BPS		(17)		/* 115200bps@66MHz */
 #define	SCBRR_115200BPS_E3_SSCG	(15)		/* 115200bps@60MHz SSCG */
+#define	SCBRR_115200BPSON	(16)		/* 115200bps@62.5MHz MD12=ON */
 #define	SCBRR_230400BPS		(8)		/* 230400bps@66MHz */
 
 #define	SCSCR_TE_MASK		(1 << 5)
@@ -186,6 +188,10 @@ func console_core_init
 	cmp	w1, w2
 	beq	3f
 	and	w1, w1, #PRR_PRODUCT_MASK
+	mov	w2, #PRR_PRODUCT_D3
+	cmp	w1, w2
+	beq	5f
+	and	w1, w1, #PRR_PRODUCT_MASK
 	mov	w2, #PRR_PRODUCT_E3
 	cmp	w1, w2
 	bne	4f
@@ -198,6 +204,9 @@ func console_core_init
 	bne	4f
 
 	mov	w1, #SCBRR_115200BPS_E3_SSCG	/* 115200bps@60MHz SSCG */
+	b	2f
+5:
+	mov	w1, #SCBRR_115200BPSON	/* 115200bps@62.5MHz MD12=ON */
 	b	2f
 4:
 	mov	w1, #SCBRR_115200BPS	/* 115200bps */

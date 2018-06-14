@@ -37,6 +37,9 @@
 #if RCAR_LSI == RCAR_E3	/* E3 */
   #include "E3/qos_init_e3_v10.h"
 #endif
+#if RCAR_LSI == RCAR_D3	/* D3 */
+  #include "D3/qos_init_d3.h"
+#endif
 
  /* Product Register */
 #define PRR			(0xFFF00044U)
@@ -46,12 +49,13 @@
 #define PRR_PRODUCT_M3		(0x00005200U)           /* R-Car M3 */
 #define PRR_PRODUCT_M3N		(0x00005500U)           /* R-Car M3N */
 #define PRR_PRODUCT_E3		(0x00005700U)           /* R-Car E3 */
+#define PRR_PRODUCT_D3		(0x00005800U)           /* R-Car D3 */
 #define PRR_PRODUCT_10		(0x00U)
 #define PRR_PRODUCT_11		(0x01U)
 #define PRR_PRODUCT_20		(0x10U)
 #define PRR_PRODUCT_30		(0x20U)
 
-#if !(RCAR_LSI == RCAR_E3)
+#if ((RCAR_LSI != RCAR_D3) && (RCAR_LSI != RCAR_E3))
 
 #define DRAM_CH_CNT			0x04
 uint32_t qos_init_ddr_ch;
@@ -73,7 +77,7 @@ uint8_t  qos_init_ddr_phyvalid;
 void qos_init(void)
 {
 	uint32_t reg;
-#if !(RCAR_LSI == RCAR_E3)
+#if ((RCAR_LSI != RCAR_D3) && (RCAR_LSI != RCAR_E3))
 	uint32_t i;
 
 	qos_init_ddr_ch = 0;
@@ -227,6 +231,11 @@ void qos_init(void)
 		PRR_PRODUCT_ERR(reg);
 	}
 	qos_init_e3_v10();
+ #elif RCAR_LSI == RCAR_D3	/* D3 */
+	if (PRR_PRODUCT_D3 != (reg & (PRR_PRODUCT_MASK | PRR_CUT_MASK))) {
+		PRR_PRODUCT_ERR(reg);
+	}
+	qos_init_d3();
  #else
   #error "Don't have QoS initialize routine(Unknown chip)."
  #endif

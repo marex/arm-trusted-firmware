@@ -37,6 +37,7 @@ include ${MAKE_HELPERS_DIRECTORY}defaults.mk
 ENABLE_ASSERTIONS		:= ${DEBUG}
 ENABLE_PMF			:= ${ENABLE_RUNTIME_INSTRUMENTATION}
 PLAT				:= ${DEFAULT_PLAT}
+SPD				:= none
 
 ################################################################################
 # Checkpatch script options
